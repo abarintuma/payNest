@@ -7,8 +7,7 @@ class FirestoreService {
   final FirebaseService _firebase = FirebaseService.instance;
 
   String? _businessId;
-  String get businessId =>
-      _businessId ?? (_firebase.currentUser?.uid ?? 'default_business');
+  String get businessId => _businessId ?? 'paynest_main_store';
 
   void setBusinessId(String id) {
     _businessId = id;

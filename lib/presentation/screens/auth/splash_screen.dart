@@ -28,12 +28,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     await Future.delayed(const Duration(milliseconds: 2200));
     if (!mounted) return;
 
-    final auth = context.read<AuthProvider>();
-    if (auth.isAuthenticated) {
-      Navigator.pushReplacementNamed(context, AppConstants.routeHome);
-    } else {
-      Navigator.pushReplacementNamed(context, AppConstants.routeLogin);
-    }
+    Navigator.pushReplacementNamed(context, AppConstants.routeHome);
   }
 
   @override

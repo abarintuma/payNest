@@ -1,95 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-
-    function isUser(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
-    }
-
-    function getUserData() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-    }
-
-    function isMemberOf(businessId) {
-      return isAuthenticated() && (
-        request.auth.token.businessId == businessId ||
-        getUserData().businessId == businessId ||
-        exists(/databases/$(database)/documents/businesses/$(businessId)/members/$(request.auth.uid))
-      );
-    }
-
-    function getMemberRole(businessId) {
-      return get(/databases/$(database)/documents/businesses/$(businessId)/members/$(request.auth.uid)).data.role;
-    }
-
-    function hasRole(businessId, allowedRoles) {
-      return isMemberOf(businessId) && (
-        request.auth.token.role in allowedRoles ||
-        getUserData().role in allowedRoles ||
-        getMemberRole(businessId) in allowedRoles
-      );
-    }
-
-    // User profiles
-    match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isUser(userId);
-    }
-
-    // Business Root Documents
-    match /businesses/{businessId} {
-      allow read: if isMemberOf(businessId);
-      allow create: if isAuthenticated();
-      allow update, delete: if hasRole(businessId, ['owner', 'admin']);
-
-      // Business Team Members & Roles
-      match /members/{memberId} {
-        allow read: if isMemberOf(businessId);
-        allow write: if hasRole(businessId, ['owner', 'admin']);
-      }
-
-      // Products Catalog & Stock
-      match /products/{productId} {
-        allow read: if isMemberOf(businessId);
-        // Only managers or owners can add/edit products or manually adjust base stock
-        allow create, update, delete: if hasRole(businessId, ['owner', 'manager', 'admin']);
-        // Cashiers can update stock via sales batch increment
-        allow update: if isMemberOf(businessId) && 
-                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock_quantity', 'updated_at']);
-      }
-
-      // Customers & Loyalty
-      match /customers/{customerId} {
-        allow read: if isMemberOf(businessId);
-        // Cashiers, managers, and owners can register or update customers during checkout
-        allow create, update: if isMemberOf(businessId);
-        allow delete: if hasRole(businessId, ['owner', 'manager']);
-      }
-
-      // Sales & Transactions
-      match /sales/{saleId} {
-        allow read: if isMemberOf(businessId);
-        // Any team member can record a completed sale
-        allow create: if isMemberOf(businessId) &&
-                      request.resource.data.total >= 0 &&
-                      request.resource.data.receiptNumber != null;
-        // Only managers or owners can refund, void, or edit transactions
-        allow update: if hasRole(businessId, ['owner', 'manager']);
-        // Sales records must never be deleted (financial audit trail integrity)
-        allow delete: if false;
-      }
-
-      // Immutable Inventory Audit Logs
-      match /inventory_logs/{logId} {
-        allow read: if hasRole(businessId, ['owner', 'manager']);
-        allow create: if isMemberOf(businessId);
-        allow update, delete: if false; // Immutable audit log
-      }
+    // Open read and write access for all users and devices
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }

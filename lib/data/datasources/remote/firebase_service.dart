@@ -30,6 +30,17 @@ class FirebaseService {
 
       if (options != null) {
         await Firebase.initializeApp(options: options);
+      } else if (kIsWeb) {
+        await Firebase.initializeApp(
+          options: const FirebaseOptions(
+            apiKey: 'AIzaSyAZytHoe4T_KC7KjaX2aKW12gakrD0rSr0',
+            appId: '1:983099985598:web:paynest',
+            messagingSenderId: '983099985598',
+            projectId: 'paynest-38428',
+            authDomain: 'paynest-38428.firebaseapp.com',
+            storageBucket: 'paynest-38428.firebasestorage.app',
+          ),
+        );
       } else {
         await Firebase.initializeApp();
       }
