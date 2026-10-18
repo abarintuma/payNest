@@ -31,18 +31,19 @@ void main() async {
     ),
   );
 
-  // Initialize local SQLite database and populate development dataset if empty
-  try {
-    await DevDataSeeder.instance.seedAll();
-  } catch (e) {
-    debugPrint('Local database initialization note: $e');
-  }
-
   // Initialize Firebase (gracefully falls back if offline / pending config)
   try {
     await FirebaseService.instance.initialize();
   } catch (e) {
     debugPrint('Firebase init handled gracefully: $e');
+  }
+
+  // Initialize local SQLite database and populate development dataset if empty,
+  // then sync to Firebase if online
+  try {
+    await DevDataSeeder.instance.seedAll();
+  } catch (e) {
+    debugPrint('Local database initialization note: $e');
   }
 
   // Start background offline-first sync coordinator
