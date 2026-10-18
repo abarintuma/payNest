@@ -677,9 +677,21 @@ class _TransactionTile extends StatelessWidget {
         payIcon = Icons.credit_card_rounded;
         payColor = AppColors.cardColor;
         break;
+      case AppConstants.paymentMtnMomo:
+        payIcon = Icons.phone_android_rounded;
+        payColor = AppColors.mtnMomoColor;
+        break;
+      case AppConstants.paymentAirtelMoney:
+        payIcon = Icons.contactless_rounded;
+        payColor = AppColors.airtelMoneyColor;
+        break;
       case AppConstants.paymentMpesa:
         payIcon = Icons.phone_android_rounded;
         payColor = AppColors.mpesaColor;
+        break;
+      case AppConstants.paymentBank:
+        payIcon = Icons.account_balance_rounded;
+        payColor = AppColors.bankColor;
         break;
       default:
         payIcon = Icons.payments_rounded;

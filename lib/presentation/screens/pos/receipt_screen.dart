@@ -182,8 +182,7 @@ class ReceiptScreen extends StatelessWidget {
                           child: Column(
                             children: [
                               _ReceiptRow('Subtotal', AppUtils.formatCurrency(transaction.subtotal, symbol: settings.currencySymbol)),
-                              const SizedBox(height: 6),
-                              _ReceiptRow('Tax (VAT 16%)', AppUtils.formatCurrency(transaction.taxAmount, symbol: settings.currencySymbol)),
+                              _ReceiptRow('Tax (VAT ${settings.taxRate.toStringAsFixed(0)}%)', AppUtils.formatCurrency(transaction.taxAmount, symbol: settings.currencySymbol)),
                               if (transaction.discountAmount > 0) ...[
                                 const SizedBox(height: 6),
                                 _ReceiptRow('Discount', '- ${AppUtils.formatCurrency(transaction.discountAmount, symbol: settings.currencySymbol)}', valueColor: AppColors.success),

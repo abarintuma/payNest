@@ -495,8 +495,7 @@ class CartScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       _SummaryRow('Subtotal', AppUtils.formatCurrency(cart.subtotal, symbol: settings.currencySymbol)),
-                      const SizedBox(height: 6),
-                      _SummaryRow('Tax (16% VAT)', AppUtils.formatCurrency(cart.taxAmount, symbol: settings.currencySymbol)),
+                      _SummaryRow('Tax (VAT ${settings.taxRate.toStringAsFixed(0)}%)', AppUtils.formatCurrency(cart.taxAmount, symbol: settings.currencySymbol)),
                       if (cart.discountAmount > 0) ...[
                         const SizedBox(height: 6),
                         _SummaryRow(

@@ -26,8 +26,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   final List<_PaymentOption> _paymentOptions = [
     _PaymentOption(AppConstants.paymentCash, Icons.payments_rounded, AppColors.cashColor),
+    _PaymentOption(AppConstants.paymentMtnMomo, Icons.phone_android_rounded, AppColors.mtnMomoColor),
+    _PaymentOption(AppConstants.paymentAirtelMoney, Icons.contactless_rounded, AppColors.airtelMoneyColor),
     _PaymentOption(AppConstants.paymentCard, Icons.credit_card_rounded, AppColors.cardColor),
-    _PaymentOption(AppConstants.paymentMpesa, Icons.phone_android_rounded, AppColors.mpesaColor),
     _PaymentOption(AppConstants.paymentBank, Icons.account_balance_rounded, AppColors.bankColor),
   ];
 
@@ -36,7 +37,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cart = context.read<CartProvider>();
-      _amountController.text = cart.total.toStringAsFixed(2);
+      _amountController.text = cart.total % 1 == 0
+          ? cart.total.toInt().toString()
+          : cart.total.toStringAsFixed(2);
     });
   }
 
@@ -284,14 +287,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       // Quick amount buttons
                       Wrap(
                         spacing: 8,
-                        children: [50, 100, 200, 500, 1000, 2000].map((amount) {
+                        children: [1000, 2000, 5000, 10000, 20000, 50000].map((amount) {
                           return ActionChip(
                             label: Text(
-                              '${settings.currencySymbol} $amount',
+                              '${settings.currencySymbol} ${amount >= 1000 ? "${amount ~/ 1000}k" : amount}',
                               style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600),
                             ),
                             onPressed: () {
-                              _amountController.text = amount.toStringAsFixed(2);
+                              _amountController.text = amount.toString();
                               setState(() {});
                             },
                           );
