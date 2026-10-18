@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:path/path.dart';
 import 'package:paynest/core/constants/app_constants.dart';
 
@@ -15,6 +17,18 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB() async {
+    if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+      return await databaseFactory.openDatabase(
+        AppConstants.dbName,
+        options: OpenDatabaseOptions(
+          version: AppConstants.dbVersion,
+          onCreate: _createDB,
+          onUpgrade: _onUpgrade,
+        ),
+      );
+    }
+
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, AppConstants.dbName);
     return await openDatabase(

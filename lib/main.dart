@@ -13,6 +13,7 @@ import 'package:paynest/presentation/screens/customers/customers_screen.dart';
 import 'package:paynest/presentation/screens/settings/settings_screen.dart';
 import 'package:paynest/data/datasources/remote/firebase_service.dart';
 import 'package:paynest/data/datasources/remote/sync_service.dart';
+import 'package:paynest/data/datasources/local/dev_data_seeder.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,13 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
+
+  // Initialize local SQLite database and populate development dataset if empty
+  try {
+    await DevDataSeeder.instance.seedAll();
+  } catch (e) {
+    debugPrint('Local database initialization note: $e');
+  }
 
   // Initialize Firebase (gracefully falls back if offline / pending config)
   try {

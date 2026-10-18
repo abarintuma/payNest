@@ -7,6 +7,7 @@ import 'package:paynest/core/theme/app_theme.dart';
 import 'package:paynest/presentation/providers/providers.dart';
 import 'package:paynest/presentation/providers/auth_provider.dart';
 import 'package:paynest/data/datasources/remote/sync_service.dart';
+import 'package:paynest/data/datasources/local/dev_data_seeder.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -496,6 +497,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.warning_rounded,
                 color: AppColors.error,
                 children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.dataset_rounded, color: AppColors.primary),
+                    title: const Text('Load Uganda Demo Dataset'),
+                    subtitle: const Text('Populate products, customers & sales for testing'),
+                    onTap: () async {
+                      await DevDataSeeder.instance.seedAll(force: true);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Uganda demo dataset loaded successfully!'),
+                            backgroundColor: AppColors.success,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const Divider(),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.download_rounded, color: AppColors.info),
