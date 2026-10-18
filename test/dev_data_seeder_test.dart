@@ -36,7 +36,7 @@ void main() {
 
       // Verify products
       final products = await productRepo.getAllProducts();
-      expect(products.length, greaterThanOrEqualTo(15));
+      expect(products.length, greaterThanOrEqualTo(25));
       expect(products.any((p) => p.name.contains('Rolex')), isTrue);
       expect(products.any((p) => p.name.contains('Luwombo')), isTrue);
       expect(products.any((p) => p.taxRate == 18.0), isTrue);
@@ -47,13 +47,13 @@ void main() {
 
       // Verify customers
       final customers = await customerRepo.getAllCustomers();
-      expect(customers.length, greaterThanOrEqualTo(5));
+      expect(customers.length, greaterThanOrEqualTo(10));
       expect(customers.any((c) => c.name == 'Kato Mukasa'), isTrue);
       expect(customers.any((c) => c.phone == '+256772123456'), isTrue);
 
       // Verify transactions & 18% VAT calculations
       final txns = await txnRepo.getAllTransactions();
-      expect(txns.length, greaterThanOrEqualTo(10));
+      expect(txns.length, greaterThanOrEqualTo(20));
       for (final txn in txns) {
         expect(txn.paymentMethod, isIn([
           AppConstants.paymentCash,
