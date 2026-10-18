@@ -418,6 +418,8 @@ class _SalesTab extends StatelessWidget {
                         final colors = {
                           'Cash': AppColors.cashColor,
                           'Card': AppColors.cardColor,
+                          'MTN MoMo': AppColors.mtnMomoColor,
+                          'Airtel Money': AppColors.airtelMoneyColor,
                           'M-Pesa': AppColors.mpesaColor,
                           'Bank Transfer': AppColors.bankColor,
                         };
@@ -440,6 +442,8 @@ class _SalesTab extends StatelessWidget {
                 final colors = {
                   'Cash': AppColors.cashColor,
                   'Card': AppColors.cardColor,
+                  'MTN MoMo': AppColors.mtnMomoColor,
+                  'Airtel Money': AppColors.airtelMoneyColor,
                   'M-Pesa': AppColors.mpesaColor,
                   'Bank Transfer': AppColors.bankColor,
                 };

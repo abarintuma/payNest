@@ -56,9 +56,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       businessAddress: _businessAddressCtrl.text.trim().isEmpty ? null : _businessAddressCtrl.text.trim(),
       businessPhone: _businessPhoneCtrl.text.trim().isEmpty ? null : _businessPhoneCtrl.text.trim(),
       businessEmail: _businessEmailCtrl.text.trim().isEmpty ? null : _businessEmailCtrl.text.trim(),
-      taxRate: double.tryParse(_taxRateCtrl.text) ?? 16.0,
+      taxRate: double.tryParse(_taxRateCtrl.text) ?? 18.0,
       receiptFooter: _footerCtrl.text.trim().isEmpty ? null : _footerCtrl.text.trim(),
-      currencySymbol: _currencyCtrl.text.trim().isEmpty ? 'KSh' : _currencyCtrl.text.trim(),
+      currencySymbol: _currencyCtrl.text.trim().isEmpty ? 'UGX' : _currencyCtrl.text.trim(),
     ));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -170,6 +170,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: ['UGX', 'USh', 'USD', 'EUR', 'GBP'].map((curr) {
+                      final isSelected = _currencyCtrl.text == curr;
+                      return ChoiceChip(
+                        label: Text(curr),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setState(() {
+                              _currencyCtrl.text = curr;
+                            });
+                          }
+                        },
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
