@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:paynest/core/theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:paynest/core/theme/app_theme.dart';
 
 /// A reusable gradient button
 class GradientButton extends StatelessWidget {
@@ -256,11 +257,13 @@ class StatCard extends StatelessWidget {
   }
 }
 
-/// Empty state widget
+/// Empty state widget with animation & image support
 class EmptyState extends StatelessWidget {
   final String title;
   final String message;
-  final IconData icon;
+  final IconData? icon;
+  final String? animationAsset;
+  final String? imageAsset;
   final String? actionLabel;
   final VoidCallback? onAction;
 
@@ -268,28 +271,72 @@ class EmptyState extends StatelessWidget {
     super.key,
     required this.title,
     required this.message,
-    required this.icon,
+    this.icon,
+    this.animationAsset,
+    this.imageAsset,
     this.actionLabel,
     this.onAction,
   });
 
   @override
   Widget build(BuildContext context) {
+    Widget visual;
+
+    if (animationAsset != null) {
+      visual = SizedBox(
+        width: 140,
+        height: 140,
+        child: Lottie.asset(
+          animationAsset!,
+          errorBuilder: (_, __, ___) => Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon ?? Icons.inbox_outlined, color: AppColors.primary, size: 36),
+          ),
+        ),
+      );
+    } else if (imageAsset != null) {
+      visual = ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Image.asset(
+          imageAsset!,
+          width: 130,
+          height: 130,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon ?? Icons.inbox_outlined, color: AppColors.primary, size: 36),
+          ),
+        ),
+      );
+    } else {
+      visual = Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon ?? Icons.inbox_outlined, color: AppColors.primary, size: 36),
+      );
+    }
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: AppColors.primary, size: 36),
-            ),
+            visual,
             const SizedBox(height: 20),
             Text(
               title,

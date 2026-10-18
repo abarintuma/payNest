@@ -65,6 +65,7 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>PayNest needs camera access to scan product barcodes and QR codes for fast checkout.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

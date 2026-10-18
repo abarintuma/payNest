@@ -94,11 +94,19 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           offset: const Offset(0, 8),
                         ),
                       ],
-                    ),
-                    child: const Icon(
-                      Icons.point_of_sale_rounded,
-                      color: Colors.white,
-                      size: 50,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: Image.asset(
+                        'assets/images/app_logo.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.point_of_sale_rounded,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      ),
                     ),
                   )
                       .animate()
