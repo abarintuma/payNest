@@ -7,7 +7,8 @@ class FirestoreService {
   final FirebaseService _firebase = FirebaseService.instance;
 
   String? _businessId;
-  String get businessId => _businessId ?? 'default_business';
+  String get businessId =>
+      _businessId ?? (_firebase.currentUser?.uid ?? 'default_business');
 
   void setBusinessId(String id) {
     _businessId = id;
@@ -27,6 +28,32 @@ class FirestoreService {
 
   CollectionReference<Map<String, dynamic>> get _inventoryLogsRef =>
       _businessDoc.collection('inventory_logs');
+
+  /// Ensure root business document and owner membership exist to satisfy security rules
+  Future<void> ensureBusinessInitialized() async {
+    if (!_firebase.isInitialized) return;
+    final user = _firebase.currentUser;
+
+    try {
+      await _businessDoc.set({
+        'name': 'PayNest POS',
+        'ownerId': user?.uid ?? 'anonymous',
+        'currency': 'UGX',
+        'country': 'Uganda',
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      if (user != null) {
+        await _businessDoc.collection('members').doc(user.uid).set({
+          'role': 'owner',
+          'email': user.email ?? '',
+          'addedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
+    } catch (e) {
+      debugPrint('[FirestoreService] Note initializing business: $e');
+    }
+  }
 
   // Products
   Stream<List<Product>> streamProducts() {
@@ -118,7 +145,7 @@ class FirestoreService {
   }
 
   // Sales & Inventory Decrements
-  Future<void> recordSale(Transaction txn) async {
+  Future<void> recordSale(Transaction txn, {bool updateStockInFirestore = true}) async {
     if (!_firebase.isInitialized) return;
 
     final batch = _firebase.firestore.batch();
@@ -151,24 +178,27 @@ class FirestoreService {
       'isOfflineCreated': !txn.isSynced,
       'deviceTimestamp': Timestamp.fromDate(txn.createdAt),
       'createdAt': FieldValue.serverTimestamp(),
-    });
+    }, SetOptions(merge: true));
 
-    // Update inventory and create audit logs
-    for (final item in txn.items) {
-      final productDoc = _productsRef.doc(item.productId);
-      batch.update(productDoc, {
-        'stock_quantity': FieldValue.increment(-item.quantity),
-      });
+    // Update inventory and create audit logs only if requested
+    if (updateStockInFirestore) {
+      for (final item in txn.items) {
+        final productDoc = _productsRef.doc(item.productId);
+        batch.update(productDoc, {
+          'stock_quantity': FieldValue.increment(-item.quantity),
+        });
 
-      final logDoc = _inventoryLogsRef.doc();
-      batch.set(logDoc, {
-        'productId': item.productId,
-        'changeQuantity': -item.quantity,
-        'reason': 'SALE',
-        'saleId': txn.id,
-        'receiptNumber': txn.receiptNumber,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+        // Use deterministic log document ID to avoid duplicate deductions on retry
+        final logDoc = _inventoryLogsRef.doc('${txn.id}_${item.productId}');
+        batch.set(logDoc, {
+          'productId': item.productId,
+          'changeQuantity': -item.quantity,
+          'reason': 'SALE',
+          'saleId': txn.id,
+          'receiptNumber': txn.receiptNumber,
+          'timestamp': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
     }
 
     // Update customer stats if linked
@@ -199,5 +229,53 @@ class FirestoreService {
       }
     }
     return syncedIds;
+  }
+
+  /// Bulk sync all local SQLite products, customers and sales directly to Firestore
+  Future<int> syncAllLocalDataToFirestore({
+    required List<Product> products,
+    required List<Customer> customers,
+    required List<Transaction> transactions,
+  }) async {
+    if (!_firebase.isInitialized) {
+      debugPrint('[FirestoreService] Firebase is not initialized. Skipping cloud sync.');
+      return 0;
+    }
+
+    await ensureBusinessInitialized();
+    int syncedCount = 0;
+
+    // 1. Sync all products to Firestore
+    for (final product in products) {
+      try {
+        await upsertProduct(product);
+        syncedCount++;
+      } catch (e) {
+        debugPrint('[FirestoreService] Error syncing product ${product.id}: $e');
+      }
+    }
+
+    // 2. Sync all customers to Firestore
+    for (final customer in customers) {
+      try {
+        await upsertCustomer(customer);
+        syncedCount++;
+      } catch (e) {
+        debugPrint('[FirestoreService] Error syncing customer ${customer.id}: $e');
+      }
+    }
+
+    // 3. Sync all transactions to Firestore
+    for (final txn in transactions) {
+      try {
+        await recordSale(txn, updateStockInFirestore: false);
+        syncedCount++;
+      } catch (e) {
+        debugPrint('[FirestoreService] Error syncing transaction ${txn.id}: $e');
+      }
+    }
+
+    debugPrint('[FirestoreService] Successfully pushed $syncedCount items to Firestore.');
+    return syncedCount;
   }
 }

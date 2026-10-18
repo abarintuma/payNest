@@ -507,8 +507,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Uganda demo dataset loaded successfully!'),
+                            content: Text('Uganda demo dataset loaded & synced successfully!'),
                             backgroundColor: AppColors.success,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.cloud_upload_rounded, color: AppColors.info),
+                    title: const Text('Push All Data to Firebase'),
+                    subtitle: const Text('Uploads products, customers & sales to Firestore'),
+                    onTap: () async {
+                      final count = await DevDataSeeder.instance.syncAllToFirebase();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(count > 0
+                                ? 'Successfully uploaded $count records to Firebase Cloud Firestore!'
+                                : 'Firebase not connected or no data uploaded.'),
+                            backgroundColor: count > 0 ? AppColors.success : AppColors.warning,
                           ),
                         );
                       }
