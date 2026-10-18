@@ -15,8 +15,8 @@ class SettingsProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _settings = AppSettings(
       businessName: prefs.getString(AppConstants.keyBusinessName) ?? 'My Business',
-      currencySymbol: prefs.getString(AppConstants.keyCurrencySymbol) ?? 'KSh',
-      taxRate: prefs.getDouble(AppConstants.keyTaxRate) ?? 16.0,
+      currencySymbol: prefs.getString(AppConstants.keyCurrencySymbol) ?? AppConstants.defaultCurrencySymbol,
+      taxRate: prefs.getDouble(AppConstants.keyTaxRate) ?? AppConstants.defaultTaxRate,
       darkMode: prefs.getBool(AppConstants.keyDarkMode) ?? false,
       pinEnabled: prefs.getBool(AppConstants.keyPinEnabled) ?? false,
       biometricEnabled: prefs.getBool(AppConstants.keyBiometricEnabled) ?? false,
@@ -46,12 +46,14 @@ class CartProvider extends ChangeNotifier {
   final List<CartItem> _items = [];
   Customer? _selectedCustomer;
   double _discountPercent = 0;
+  double _taxRate = AppConstants.defaultTaxRate;
   String _paymentMethod = AppConstants.paymentCash;
   String _notes = '';
 
   List<CartItem> get items => List.unmodifiable(_items);
   Customer? get selectedCustomer => _selectedCustomer;
   double get discountPercent => _discountPercent;
+  double get taxRate => _taxRate;
   String get paymentMethod => _paymentMethod;
   String get notes => _notes;
 
@@ -61,8 +63,13 @@ class CartProvider extends ChangeNotifier {
   double get subtotal => _items.fold(0, (sum, item) => sum + item.total);
   double get discountAmount => subtotal * (_discountPercent / 100);
   double get taxableAmount => subtotal - discountAmount;
-  double get taxAmount => taxableAmount * 0.16; // 16% VAT
+  double get taxAmount => taxableAmount * (_taxRate / 100);
   double get total => taxableAmount + taxAmount;
+
+  void setTaxRate(double rate) {
+    _taxRate = rate;
+    notifyListeners();
+  }
 
   void addItem(Product product, {int quantity = 1}) {
     final existingIndex = _items.indexWhere((i) => i.product.id == product.id);

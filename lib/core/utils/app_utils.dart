@@ -1,8 +1,9 @@
 import 'package:intl/intl.dart';
 
-class AppUtils {
-  static String formatCurrency(double amount, {String symbol = 'KSh'}) {
-    final formatter = NumberFormat('#,##0.00', 'en_US');
+  static String formatCurrency(double amount, {String symbol = 'UGX'}) {
+    final formatter = amount % 1 == 0
+        ? NumberFormat('#,##0', 'en_US')
+        : NumberFormat('#,##0.00', 'en_US');
     return '$symbol ${formatter.format(amount)}';
   }
 

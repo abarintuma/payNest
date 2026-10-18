@@ -41,6 +41,8 @@ class AppColors {
   // Payment Method Colors
   static const Color cashColor = Color(0xFF00C897);
   static const Color cardColor = Color(0xFF3DAEFF);
+  static const Color mtnMomoColor = Color(0xFFFFB800); // MTN Yellow
+  static const Color airtelMoneyColor = Color(0xFFE60000); // Airtel Red
   static const Color mpesaColor = Color(0xFF4CAF50);
   static const Color bankColor = Color(0xFFFF9800);
 
