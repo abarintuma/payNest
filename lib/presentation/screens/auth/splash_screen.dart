@@ -94,6 +94,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           offset: const Offset(0, 8),
                         ),
                       ],
+                    ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(28),
                       child: Image.asset(

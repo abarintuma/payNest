@@ -597,6 +597,7 @@ class _DashboardTabState extends State<DashboardTab> {
       return const EmptyState(
         title: 'No Transactions Yet',
         message: 'Start making sales to see them here',
+        animationAsset: 'assets/animations/empty_box.json',
         icon: Icons.receipt_long_rounded,
       );
     }

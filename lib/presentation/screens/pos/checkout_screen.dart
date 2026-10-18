@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -25,10 +26,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isProcessing = false;
 
   final List<_PaymentOption> _paymentOptions = [
-    _PaymentOption(AppConstants.paymentCash, Icons.payments_rounded, AppColors.cashColor),
-    _PaymentOption(AppConstants.paymentMtnMomo, Icons.phone_android_rounded, AppColors.mtnMomoColor),
-    _PaymentOption(AppConstants.paymentAirtelMoney, Icons.contactless_rounded, AppColors.airtelMoneyColor),
-    _PaymentOption(AppConstants.paymentCard, Icons.credit_card_rounded, AppColors.cardColor),
+    _PaymentOption(AppConstants.paymentCash, Icons.payments_rounded, AppColors.cashColor, svgAsset: 'assets/icons/cash.svg'),
+    _PaymentOption(AppConstants.paymentMtnMomo, Icons.phone_android_rounded, AppColors.mtnMomoColor, svgAsset: 'assets/icons/mtn_momo.svg'),
+    _PaymentOption(AppConstants.paymentAirtelMoney, Icons.contactless_rounded, AppColors.airtelMoneyColor, svgAsset: 'assets/icons/airtel_money.svg'),
+    _PaymentOption(AppConstants.paymentCard, Icons.credit_card_rounded, AppColors.cardColor, svgAsset: 'assets/icons/credit_card.svg'),
     _PaymentOption(AppConstants.paymentBank, Icons.account_balance_rounded, AppColors.bankColor),
   ];
 
@@ -241,7 +242,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(opt.icon, color: opt.color, size: 22),
+                                if (opt.svgAsset != null)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: SvgPicture.asset(
+                                      opt.svgAsset!,
+                                      width: 22,
+                                      height: 22,
+                                    ),
+                                  )
+                                else
+                                  Icon(opt.icon, color: opt.color, size: 22),
                                 const SizedBox(width: 8),
                                 Text(
                                   opt.method,
@@ -372,7 +383,8 @@ class _PaymentOption {
   final String method;
   final IconData icon;
   final Color color;
-  const _PaymentOption(this.method, this.icon, this.color);
+  final String? svgAsset;
+  const _PaymentOption(this.method, this.icon, this.color, {this.svgAsset});
 }
 
 class _OrderStat extends StatelessWidget {
