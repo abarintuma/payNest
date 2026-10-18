@@ -42,7 +42,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final settings = context.watch<SettingsProvider>().settings;
 
     return Scaffold(

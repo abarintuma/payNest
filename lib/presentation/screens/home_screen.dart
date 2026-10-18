@@ -13,7 +13,6 @@ import 'package:paynest/presentation/screens/pos/pos_screen.dart';
 import 'package:paynest/presentation/screens/inventory/inventory_screen.dart';
 import 'package:paynest/presentation/screens/customers/customers_screen.dart';
 import 'package:paynest/presentation/screens/reports/reports_screen.dart';
-import 'package:paynest/presentation/screens/settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -189,7 +188,6 @@ class DashboardTab extends StatefulWidget {
 class _DashboardTabState extends State<DashboardTab> {
   final _txnRepo = TransactionRepository();
   final _productRepo = ProductRepository();
-  final _customerRepo = CustomerRepository();
 
   Map<String, dynamic> _stats = {};
   List<Product> _lowStock = [];
@@ -630,7 +628,6 @@ class _QuickActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),

@@ -127,7 +127,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Navigate to receipt
       if (!mounted) return;
-      final savedCart = CartProvider();
       cart.clearCart();
 
       Navigator.pushAndRemoveUntil(

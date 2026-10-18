@@ -3,8 +3,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:paynest/core/theme/app_theme.dart';
-import 'package:paynest/core/widgets/common_widgets.dart';
-import 'package:paynest/data/models/models.dart';
 import 'package:paynest/presentation/providers/providers.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -78,8 +76,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(

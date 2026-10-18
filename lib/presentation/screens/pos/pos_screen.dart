@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:paynest/core/constants/app_constants.dart';
 import 'package:paynest/core/theme/app_theme.dart';
 import 'package:paynest/core/utils/app_utils.dart';
 import 'package:paynest/core/widgets/common_widgets.dart';
