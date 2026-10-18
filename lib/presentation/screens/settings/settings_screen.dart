@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:paynest/core/constants/app_constants.dart';
 import 'package:paynest/core/theme/app_theme.dart';
 import 'package:paynest/presentation/providers/providers.dart';
+import 'package:paynest/presentation/providers/auth_provider.dart';
+import 'package:paynest/data/datasources/remote/sync_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -72,6 +75,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     }
+  }
+
+  String _formatTime(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${dt.day}/${dt.month} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -270,6 +282,199 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 20),
 
+              // Cloud Sync
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  final sync = SyncService.instance;
+                  return _SettingsSection(
+                    title: 'Cloud & Sync',
+                    icon: Icons.cloud_sync_rounded,
+                    color: AppColors.info,
+                    children: [
+                      if (auth.isAuthenticated) ...[
+                        Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [AppColors.gradientStart, AppColors.gradientEnd],
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  (auth.user?.displayName ?? auth.user?.email ?? 'U')[0].toUpperCase(),
+                                  style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (auth.user?.displayName != null && auth.user!.displayName!.isNotEmpty)
+                                    Text(
+                                      auth.user!.displayName!,
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                  Text(
+                                    auth.user?.email ?? '',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textSecondaryLight),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.success.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'Online',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: AppColors.success,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 24),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: sync.isSyncingNotifier,
+                          builder: (_, syncing, __) => ValueListenableBuilder<int>(
+                            valueListenable: sync.pendingSyncCountNotifier,
+                            builder: (_, pending, __) => ValueListenableBuilder<DateTime?>(
+                              valueListenable: sync.lastSyncTimeNotifier,
+                              builder: (_, lastSync, __) => Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        syncing ? Icons.sync_rounded : Icons.check_circle_rounded,
+                                        size: 18,
+                                        color: syncing ? AppColors.warning : AppColors.success,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          syncing
+                                              ? 'Syncing $pending transactions...'
+                                              : pending > 0
+                                                  ? '$pending transactions pending sync'
+                                                  : 'All data is up to date',
+                                          style: Theme.of(context).textTheme.bodySmall,
+                                        ),
+                                      ),
+                                      if (!syncing && pending > 0)
+                                        TextButton(
+                                          onPressed: () => sync.syncPendingTransactions(),
+                                          style: TextButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          ),
+                                          child: Text('Sync Now', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.primary)),
+                                        ),
+                                    ],
+                                  ),
+                                  if (lastSync != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(width: 26),
+                                          Text(
+                                            'Last synced: ${_formatTime(lastSync)}',
+                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                  color: AppColors.textSecondaryLight,
+                                                  fontSize: 11,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              final confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  title: const Text('Sign Out'),
+                                  content: const Text('Your local data will be preserved. Cloud sync will pause until you sign in again.'),
+                                  actions: [
+                                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                                    ElevatedButton(
+                                      onPressed: () => Navigator.pop(context, true),
+                                      child: const Text('Sign Out'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (confirmed == true && context.mounted) {
+                                await context.read<AuthProvider>().signOut();
+                                if (context.mounted) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    AppConstants.routeLogin,
+                                    (route) => false,
+                                  );
+                                }
+                              }
+                            },
+                            icon: const Icon(Icons.logout_rounded, size: 18),
+                            label: const Text('Sign Out'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.error,
+                              side: const BorderSide(color: AppColors.error),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ),
+                      ] else ...[
+                        Row(
+                          children: [
+                            const Icon(Icons.cloud_off_rounded, color: AppColors.textSecondaryLight, size: 20),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Not signed in — running in offline mode',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () => Navigator.pushNamed(context, AppConstants.routeLogin),
+                            icon: const Icon(Icons.login_rounded, size: 18),
+                            label: const Text('Sign In / Register'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+
               // About
               _SettingsSection(
                 title: 'About',
@@ -278,7 +483,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   _InfoTile('App Version', '1.0.0', Icons.verified_rounded),
                   const Divider(),
-                  _InfoTile('Database', 'SQLite (Local)', Icons.storage_rounded),
+                  _InfoTile('Database', 'SQLite + Firebase', Icons.storage_rounded),
                   const Divider(),
                   _InfoTile('Platform', 'Android & iOS', Icons.phone_android_rounded),
                 ],

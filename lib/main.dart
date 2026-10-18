@@ -4,11 +4,15 @@ import 'package:provider/provider.dart';
 import 'package:paynest/core/constants/app_constants.dart';
 import 'package:paynest/core/theme/app_theme.dart';
 import 'package:paynest/presentation/providers/providers.dart';
+import 'package:paynest/presentation/providers/auth_provider.dart';
 import 'package:paynest/presentation/screens/auth/splash_screen.dart';
+import 'package:paynest/presentation/screens/auth/login_screen.dart';
 import 'package:paynest/presentation/screens/home_screen.dart';
 import 'package:paynest/presentation/screens/inventory/inventory_screen.dart';
 import 'package:paynest/presentation/screens/customers/customers_screen.dart';
 import 'package:paynest/presentation/screens/settings/settings_screen.dart';
+import 'package:paynest/data/datasources/remote/firebase_service.dart';
+import 'package:paynest/data/datasources/remote/sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +30,16 @@ void main() async {
     ),
   );
 
+  // Initialize Firebase (gracefully falls back if offline / pending config)
+  try {
+    await FirebaseService.instance.initialize();
+  } catch (e) {
+    debugPrint('Firebase init handled gracefully: $e');
+  }
+
+  // Start background offline-first sync coordinator
+  SyncService.instance.startListening();
+
   runApp(const PayNestApp());
 }
 
@@ -37,6 +51,7 @@ class PayNestApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CustomerProvider()),
@@ -53,6 +68,7 @@ class PayNestApp extends StatelessWidget {
             initialRoute: AppConstants.routeSplash,
             routes: {
               AppConstants.routeSplash: (_) => const SplashScreen(),
+              AppConstants.routeLogin: (_) => const LoginScreen(),
               AppConstants.routeHome: (_) => const HomeScreen(),
               AppConstants.routeSettings: (_) => const SettingsScreen(),
               AppConstants.routeAddProduct: (_) => const AddProductScreen(),

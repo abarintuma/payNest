@@ -12,6 +12,7 @@ import 'package:paynest/data/models/models.dart';
 import 'package:paynest/data/repositories/repositories.dart';
 import 'package:paynest/presentation/providers/providers.dart';
 import 'package:paynest/presentation/screens/pos/receipt_screen.dart';
+import 'package:paynest/data/datasources/remote/sync_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -107,6 +108,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Save transaction
       await txnRepo.addTransaction(txn);
+
+      // Trigger offline sync to Firebase in background
+      SyncService.instance.updatePendingCount();
+      SyncService.instance.syncPendingTransactions();
 
       // Update stock
       for (final item in cart.items) {

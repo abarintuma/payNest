@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:paynest/core/constants/app_constants.dart';
 import 'package:paynest/core/theme/app_theme.dart';
 import 'package:paynest/presentation/providers/providers.dart';
+import 'package:paynest/presentation/providers/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,9 +25,15 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   Future<void> _init() async {
     await context.read<SettingsProvider>().loadSettings();
-    await Future.delayed(const Duration(milliseconds: 2500));
+    await Future.delayed(const Duration(milliseconds: 2200));
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, AppConstants.routeHome);
+
+    final auth = context.read<AuthProvider>();
+    if (auth.isAuthenticated) {
+      Navigator.pushReplacementNamed(context, AppConstants.routeHome);
+    } else {
+      Navigator.pushReplacementNamed(context, AppConstants.routeLogin);
+    }
   }
 
   @override
