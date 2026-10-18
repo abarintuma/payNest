@@ -21,13 +21,15 @@ class AppConstants {
   static const String keyUserId = 'user_id';
 
   // Default Values
-  static const String defaultCurrency = 'KES';
-  static const String defaultCurrencySymbol = 'KSh';
-  static const double defaultTaxRate = 16.0;
+  static const String defaultCurrency = 'UGX';
+  static const String defaultCurrencySymbol = 'UGX';
+  static const double defaultTaxRate = 18.0;
 
   // Payment Methods
   static const String paymentCash = 'Cash';
   static const String paymentCard = 'Card';
+  static const String paymentMtnMomo = 'MTN MoMo';
+  static const String paymentAirtelMoney = 'Airtel Money';
   static const String paymentMpesa = 'M-Pesa';
   static const String paymentBank = 'Bank Transfer';
 
