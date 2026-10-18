@@ -244,37 +244,110 @@ class FirestoreService {
     await ensureBusinessInitialized();
     int syncedCount = 0;
 
-    // 1. Sync all products to Firestore
+    WriteBatch batch = _firebase.firestore.batch();
+    int opCount = 0;
+
+    Future<void> commitBatchIfNeeded({bool force = false}) async {
+      if (opCount > 0 && (opCount >= 250 || force)) {
+        await batch.commit();
+        batch = _firebase.firestore.batch();
+        opCount = 0;
+      }
+    }
+
+    // 1. Sync all products to Firestore in batches
     for (final product in products) {
       try {
-        await upsertProduct(product);
+        final doc = _productsRef.doc(product.id);
+        batch.set(doc, {
+          'name': product.name,
+          'description': product.description,
+          'category': product.category,
+          'price': product.price,
+          'cost_price': product.costPrice,
+          'stock_quantity': product.stockQuantity,
+          'sku': product.sku,
+          'barcode': product.barcode,
+          'is_active': product.isActive,
+          'track_inventory': product.trackInventory,
+          'tax_rate': product.taxRate ?? 18.0,
+          'updated_at': FieldValue.serverTimestamp(),
+          'created_at': Timestamp.fromDate(product.createdAt),
+        }, SetOptions(merge: true));
+        opCount++;
         syncedCount++;
+        await commitBatchIfNeeded();
       } catch (e) {
-        debugPrint('[FirestoreService] Error syncing product ${product.id}: $e');
+        debugPrint('[FirestoreService] Error batching product ${product.id}: $e');
       }
     }
 
-    // 2. Sync all customers to Firestore
+    // 2. Sync all customers to Firestore in batches
     for (final customer in customers) {
       try {
-        await upsertCustomer(customer);
+        final doc = _customersRef.doc(customer.id);
+        batch.set(doc, {
+          'name': customer.name,
+          'email': customer.email,
+          'phone': customer.phone,
+          'address': customer.address,
+          'total_spent': customer.totalSpent,
+          'total_orders': customer.totalOrders,
+          'notes': customer.notes,
+          'loyalty_points': customer.loyaltyPoints,
+          'last_visit': customer.lastVisit != null ? Timestamp.fromDate(customer.lastVisit!) : null,
+          'created_at': Timestamp.fromDate(customer.createdAt),
+        }, SetOptions(merge: true));
+        opCount++;
         syncedCount++;
+        await commitBatchIfNeeded();
       } catch (e) {
-        debugPrint('[FirestoreService] Error syncing customer ${customer.id}: $e');
+        debugPrint('[FirestoreService] Error batching customer ${customer.id}: $e');
       }
     }
 
-    // 3. Sync all transactions to Firestore
+    // 3. Sync all transactions to Firestore in batches
     for (final txn in transactions) {
       try {
-        await recordSale(txn, updateStockInFirestore: false);
+        final doc = _salesRef.doc(txn.id);
+        final itemsData = txn.items.map((i) => {
+          'productId': i.productId,
+          'productName': i.productName,
+          'price': i.price,
+          'quantity': i.quantity,
+          'discountPercent': i.discountPercent,
+          'total': i.total,
+        }).toList();
+
+        batch.set(doc, {
+          'id': txn.id,
+          'receiptNumber': txn.receiptNumber,
+          'subtotal': txn.subtotal,
+          'taxAmount': txn.taxAmount,
+          'discountAmount': txn.discountAmount,
+          'total': txn.total,
+          'amountPaid': txn.amountPaid,
+          'change': txn.change,
+          'paymentMethod': txn.paymentMethod,
+          'status': txn.status,
+          'type': txn.type,
+          'customerId': txn.customerId,
+          'customerName': txn.customerName,
+          'items': itemsData,
+          'itemCount': txn.items.length,
+          'timestamp': Timestamp.fromDate(txn.createdAt),
+        }, SetOptions(merge: true));
+        opCount++;
         syncedCount++;
+        await commitBatchIfNeeded();
       } catch (e) {
-        debugPrint('[FirestoreService] Error syncing transaction ${txn.id}: $e');
+        debugPrint('[FirestoreService] Error batching transaction ${txn.id}: $e');
       }
     }
 
-    debugPrint('[FirestoreService] Successfully pushed $syncedCount items to Firestore.');
+    await commitBatchIfNeeded(force: true);
+
+    debugPrint('[FirestoreService] Successfully pushed $syncedCount items to Firestore in batches.');
     return syncedCount;
   }
 }

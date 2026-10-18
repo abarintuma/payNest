@@ -25,7 +25,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
 
   Map<String, dynamic> _stats = {};
   List<Map<String, dynamic>> _weeklySales = [];
-  List<Product> _topProducts = [];
+  List<Product> _allProducts = [];
   List<Customer> _topCustomers = [];
   bool _isLoading = true;
 
@@ -53,7 +53,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
         setState(() {
           _stats = stats;
           _weeklySales = weekly;
-          _topProducts = products.take(5).toList();
+          _allProducts = products; // all products, not capped
           _topCustomers = customers;
           _isLoading = false;
         });
@@ -108,7 +108,7 @@ class _ReportsScreenState extends State<ReportsScreen> with SingleTickerProvider
                 children: [
                   _OverviewTab(stats: _stats, settings: settings, weeklySales: _weeklySales, topCustomers: _topCustomers),
                   _SalesTab(stats: _stats, settings: settings, weeklySales: _weeklySales),
-                  _ProductsTab(products: _topProducts, settings: settings),
+                  _ProductsTab(products: _allProducts, settings: settings),
                 ],
               ),
       ),

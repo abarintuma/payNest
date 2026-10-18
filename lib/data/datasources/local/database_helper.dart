@@ -116,82 +116,20 @@ class DatabaseHelper {
     await db.insert('categories', {'id': 'clothing', 'name': 'Clothing', 'icon': 'checkroom', 'color': '#FFB547'});
     await db.insert('categories', {'id': 'other', 'name': 'Other', 'icon': 'more_horiz', 'color': '#94A3B8'});
 
-    // Seed sample products
-    await _seedSampleData(db);
+    // Note: DevDataSeeder owns all initial product/customer/transaction data.
+    // Do NOT seed placeholder data here — it creates duplicates and conflicts.
   }
 
-  Future<void> _seedSampleData(Database db) async {
-    final now = DateTime.now().toIso8601String();
-    final products = [
-      {
-        'id': 'p1', 'name': 'Espresso Shot', 'description': 'Rich Italian espresso', 'category': 'beverages',
-        'price': 6000.0, 'cost_price': 2000.0, 'stock_quantity': 200, 'sku': 'BEV-001',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p2', 'name': 'Cappuccino', 'description': 'Creamy steamed cappuccino', 'category': 'beverages',
-        'price': 10000.0, 'cost_price': 3500.0, 'stock_quantity': 150, 'sku': 'BEV-002',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p3', 'name': 'Chicken Rolex & Fries', 'description': 'Ugandan rolled chapati with spiced eggs and grilled chicken', 'category': 'food',
-        'price': 15000.0, 'cost_price': 7000.0, 'stock_quantity': 50, 'sku': 'FOD-001',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p4', 'name': 'Luwombo Special', 'description': 'Traditional steamed chicken stew in banana leaves', 'category': 'food',
-        'price': 25000.0, 'cost_price': 12000.0, 'stock_quantity': 30, 'sku': 'FOD-002',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p5', 'name': 'Wireless Earbuds', 'description': 'Bluetooth 5.0 earbuds with charging case', 'category': 'electronics',
-        'price': 85000.0, 'cost_price': 45000.0, 'stock_quantity': 12, 'sku': 'ELC-001',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p6', 'name': 'Fast Charge USB-C Cable', 'description': 'Braided durable 65W charging cable', 'category': 'electronics',
-        'price': 25000.0, 'cost_price': 10000.0, 'stock_quantity': 45, 'sku': 'ELC-002',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p7', 'name': 'Classic Cotton Polo', 'description': 'Premium 100% breathable cotton polo', 'category': 'clothing',
-        'price': 45000.0, 'cost_price': 20000.0, 'stock_quantity': 25, 'sku': 'CLT-001',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-      {
-        'id': 'p8', 'name': 'Fresh Passion Fruit Juice', 'description': 'Chilled 500ml fresh natural juice', 'category': 'beverages',
-        'price': 7000.0, 'cost_price': 2500.0, 'stock_quantity': 40, 'sku': 'BEV-003',
-        'is_active': 1, 'track_inventory': 1, 'tax_rate': 18.0, 'created_at': now, 'updated_at': now,
-      },
-    ];
 
-    for (final product in products) {
-      await db.insert('products', product);
-    }
-
-    // Seed sample customers (Ugandan names & phone format)
-    final customers = [
-      {
-        'id': 'c1', 'name': 'Kato Mukasa', 'email': 'kato.mukasa@example.com', 'phone': '+256772123456',
-        'total_spent': 185000.0, 'total_orders': 8, 'created_at': now, 'loyalty_points': 185.0,
-      },
-      {
-        'id': 'c2', 'name': 'Babirye Nakato', 'phone': '+256701234567',
-        'total_spent': 340000.0, 'total_orders': 15, 'created_at': now, 'loyalty_points': 340.0,
-      },
-      {
-        'id': 'c3', 'name': 'Ronald Okello', 'email': 'ronald.okello@example.com', 'phone': '+256782345678',
-        'total_spent': 95000.0, 'total_orders': 4, 'created_at': now, 'loyalty_points': 95.0,
-      },
-    ];
-
-    for (final customer in customers) {
-      await db.insert('customers', customer);
-    }
-  }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Handle migrations here in the future
+    if (oldVersion < 2) {
+      // Remove the original 8 placeholder products (p1-p8) that conflict with
+      // the DevDataSeeder's full 125-product Uganda dataset.
+      await db.delete('products', where: "id IN ('p1','p2','p3','p4','p5','p6','p7','p8')");
+      // Also clear old placeholder customers (c1-c3) to avoid duplicates.
+      await db.delete('customers', where: "id IN ('c1','c2','c3')");
+    }
   }
 
   Future<void> closeDB() async {

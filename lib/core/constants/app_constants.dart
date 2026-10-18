@@ -2,7 +2,7 @@ class AppConstants {
   static const String appName = 'PayNest';
   static const String appVersion = '1.0.0';
   static const String dbName = 'paynest.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
 
   // Hive Box Names
   static const String settingsBox = 'settings';

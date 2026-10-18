@@ -34,9 +34,9 @@ void main() {
       expect(categories.any((c) => c['id'] == 'groceries'), isTrue);
       expect(categories.any((c) => c['id'] == 'electronics'), isTrue);
 
-      // Verify products
+      // Verify products (100+)
       final products = await productRepo.getAllProducts();
-      expect(products.length, greaterThanOrEqualTo(25));
+      expect(products.length, greaterThanOrEqualTo(100));
       expect(products.any((p) => p.name.contains('Rolex')), isTrue);
       expect(products.any((p) => p.name.contains('Luwombo')), isTrue);
       expect(products.any((p) => p.taxRate == 18.0), isTrue);
@@ -45,15 +45,15 @@ void main() {
       final lowStock = await productRepo.getLowStockProducts(threshold: 10);
       expect(lowStock.isNotEmpty, isTrue);
 
-      // Verify customers
+      // Verify customers (100+)
       final customers = await customerRepo.getAllCustomers();
-      expect(customers.length, greaterThanOrEqualTo(10));
-      expect(customers.any((c) => c.name == 'Kato Mukasa'), isTrue);
-      expect(customers.any((c) => c.phone == '+256772123456'), isTrue);
+      expect(customers.length, greaterThanOrEqualTo(100));
+      expect(customers.any((c) => c.name.contains('Mukasa')), isTrue);
+      expect(customers.any((c) => c.phone != null && c.phone!.startsWith('+256')), isTrue);
 
-      // Verify transactions & 18% VAT calculations
+      // Verify transactions & 18% VAT calculations (100+)
       final txns = await txnRepo.getAllTransactions();
-      expect(txns.length, greaterThanOrEqualTo(20));
+      expect(txns.length, greaterThanOrEqualTo(100));
       for (final txn in txns) {
         expect(txn.paymentMethod, isIn([
           AppConstants.paymentCash,
