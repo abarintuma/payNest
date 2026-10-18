@@ -42,7 +42,6 @@ class ReceiptScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // Success animation
-                  Container(
                   SizedBox(
                     width: 90,
                     height: 90,
