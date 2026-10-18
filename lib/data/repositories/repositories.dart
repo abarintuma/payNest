@@ -54,6 +54,11 @@ class ProductRepository {
     return id;
   }
 
+  Future<void> saveProductFromRemote(Product product) async {
+    final db = await _dbHelper.database;
+    await db.insert('products', product.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
   Future<void> updateProduct(Product product) async {
     final db = await _dbHelper.database;
     await db.update(
@@ -163,6 +168,11 @@ class CustomerRepository {
     final maps = await db.query('customers', orderBy: 'total_spent DESC', limit: limit);
     return maps.map((m) => Customer.fromMap(m)).toList();
   }
+
+  Future<void> saveCustomerFromRemote(Customer customer) async {
+    final db = await _dbHelper.database;
+    await db.insert('customers', customer.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
 }
 
 class TransactionRepository {
@@ -241,6 +251,26 @@ class TransactionRepository {
   Future<void> updateTransactionStatus(String id, String status) async {
     final db = await _dbHelper.database;
     await db.update('transactions', {'status': status}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<Transaction>> getUnsyncedTransactions() async {
+    final db = await _dbHelper.database;
+    final maps = await db.query(
+      'transactions',
+      where: 'is_synced = 0',
+      orderBy: 'created_at ASC',
+    );
+    return maps.map((m) => Transaction.fromMap(m)).toList();
+  }
+
+  Future<void> markAsSynced(String id) async {
+    final db = await _dbHelper.database;
+    await db.update(
+      'transactions',
+      {'is_synced': 1},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<Map<String, dynamic>> getDailySummary(DateTime date) async {
