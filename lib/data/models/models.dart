@@ -31,9 +31,10 @@ class Product {
     this.isActive = true,
     this.trackInventory = true,
     this.taxRate,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  })  : createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? DateTime.now();
 
   Product copyWith({
     String? id,

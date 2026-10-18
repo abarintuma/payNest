@@ -65,6 +65,13 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>PayNest needs camera access to scan product barcodes and QR codes for fast checkout.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>PayNest needs photo library access to upload product images.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>PayNest uses Face ID for fast and secure cashier login and transaction authorization.</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>PayNest uses NFC for contactless payments and customer tag identification.</string>
 </dict>
 </plist>

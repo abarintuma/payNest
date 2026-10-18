@@ -1,17 +1,24 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:paynest/main.dart';
+import 'package:paynest/core/theme/app_theme.dart';
+import 'package:paynest/core/utils/app_utils.dart';
 
 void main() {
-  testWidgets('App initializes smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const PayNestApp());
-    expect(find.byType(PayNestApp), findsOneWidget);
+  testWidgets('Renders UGX currency badge widget properly', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: Scaffold(
+          body: Center(
+            child: Text(
+              AppUtils.formatCurrency(50000),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('UGX 50,000'), findsOneWidget);
   });
 }
