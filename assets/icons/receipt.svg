@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="rcpGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F5F9"/>
+    </linearGradient>
+  </defs>
+  <!-- Receipt paper with jagged bottom -->
+  <path d="M26 18 L74 18 L74 80 L70 76 L66 80 L62 76 L58 80 L54 76 L50 80 L46 76 L42 80 L38 76 L34 80 L30 76 L26 80 Z" fill="url(#rcpGrad)"/>
+  <!-- Business name bar -->
+  <rect x="36" y="26" width="28" height="4" rx="2" fill="#6C63FF"/>
+  <!-- Lines -->
+  <line x1="32" y1="38" x2="68" y2="38" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="46" x2="52" y2="46" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="60" y1="46" x2="68" y2="46" stroke="#1A1B2E" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="54" x2="48" y2="54" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="60" y1="54" x2="68" y2="54" stroke="#1A1B2E" stroke-width="2" stroke-linecap="round"/>
+  <!-- Divider -->
+  <line x1="32" y1="62" x2="68" y2="62" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <!-- Total -->
+  <rect x="32" y="68" width="16" height="3" rx="1.5" fill="#00C897"/>
+  <rect x="56" y="68" width="12" height="3" rx="1.5" fill="#00C897"/>
+</svg>

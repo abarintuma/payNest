@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="posGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6C63FF"/>
+      <stop offset="100%" stop-color="#00D2AA"/>
+    </linearGradient>
+  </defs>
+  <rect x="25" y="15" width="50" height="70" rx="8" fill="url(#posGrad)"/>
+  <!-- Screen -->
+  <rect x="32" y="23" width="36" height="28" rx="4" fill="#0F0F1A"/>
+  <!-- Screen elements -->
+  <line x1="38" y1="31" x2="52" y2="31" stroke="#00D2AA" stroke-width="2" stroke-linecap="round"/>
+  <line x1="38" y1="38" x2="62" y2="38" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="58" cy="45" r="2.5" fill="#00D2AA"/>
+  <!-- Keypad buttons -->
+  <circle cx="38" cy="58" r="3" fill="#FFFFFF" fill-opacity="0.8"/>
+  <circle cx="50" cy="58" r="3" fill="#FFFFFF" fill-opacity="0.8"/>
+  <circle cx="62" cy="58" r="3" fill="#FFFFFF" fill-opacity="0.8"/>
+  <circle cx="38" cy="67" r="3" fill="#FFFFFF" fill-opacity="0.8"/>
+  <circle cx="50" cy="67" r="3" fill="#FFFFFF" fill-opacity="0.8"/>
+  <circle cx="62" cy="67" r="3" fill="#FFFFFF" fill-opacity="0.8"/>
+  <!-- Card swipe slot -->
+  <line x1="32" y1="76" x2="68" y2="76" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+</svg>
