@@ -449,6 +449,7 @@ class CartScreen extends StatelessWidget {
             return const EmptyState(
               title: 'Cart is Empty',
               message: 'Add products from the POS screen to start a sale',
+              animationAsset: 'assets/animations/empty_box.json',
               icon: Icons.shopping_cart_outlined,
             );
           }

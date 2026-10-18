@@ -243,6 +243,31 @@ class _DashboardTabState extends State<DashboardTab> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        margin: const EdgeInsets.only(right: 12, bottom: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.2),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            'assets/images/app_logo.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.point_of_sale_rounded,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,

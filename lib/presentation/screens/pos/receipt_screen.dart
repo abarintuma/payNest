@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:paynest/core/constants/app_constants.dart';
 import 'package:paynest/core/theme/app_theme.dart';
 import 'package:paynest/core/utils/app_utils.dart';
@@ -42,17 +43,28 @@ class ReceiptScreen extends StatelessWidget {
                 children: [
                   // Success animation
                   Container(
-                    width: 80,
-                    height: 80,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.success, Color(0xFF00A87A)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                  SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: Lottie.asset(
+                      'assets/animations/payment_success.json',
+                      width: 90,
+                      height: 90,
+                      repeat: false,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 80,
+                        height: 80,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.success, Color(0xFF00A87A)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.check_rounded, color: Colors.white, size: 44),
                       ),
-                      shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.check_rounded, color: Colors.white, size: 44),
                   )
                       .animate()
                       .scale(duration: 400.ms, curve: Curves.elasticOut)
