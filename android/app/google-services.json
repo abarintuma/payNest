@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "983099985598",
+    "project_id": "paynest-38428",
+    "storage_bucket": "paynest-38428.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983099985598:android:35fcc426e1798c191298ef",
+        "android_client_info": {
+          "package_name": "com.paynest.paynest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZytHoe4T_KC7KjaX2aKW12gakrD0rSr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

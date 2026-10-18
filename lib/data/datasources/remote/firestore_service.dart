@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
 import 'package:flutter/foundation.dart';
 import 'package:paynest/data/models/models.dart';
 import 'package:paynest/data/datasources/remote/firebase_service.dart';
