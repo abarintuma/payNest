@@ -95,7 +95,6 @@ class DatabaseHelper {
     ''');
 
     // Seed default categories
-    final now = DateTime.now().toIso8601String();
     await db.insert('categories', {'id': 'all', 'name': 'All', 'icon': 'grid_view', 'color': '#6C63FF'});
     await db.insert('categories', {'id': 'food', 'name': 'Food', 'icon': 'restaurant', 'color': '#FF6584'});
     await db.insert('categories', {'id': 'beverages', 'name': 'Drinks', 'icon': 'local_cafe', 'color': '#00D2AA'});

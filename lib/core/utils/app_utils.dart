@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+class AppUtils {
   static String formatCurrency(double amount, {String symbol = 'UGX'}) {
     final formatter = amount % 1 == 0
         ? NumberFormat('#,##0', 'en_US')

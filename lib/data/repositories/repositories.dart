@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' hide Transaction;
 import 'package:paynest/data/models/models.dart';
 import 'package:paynest/data/datasources/local/database_helper.dart';
 import 'package:uuid/uuid.dart';
